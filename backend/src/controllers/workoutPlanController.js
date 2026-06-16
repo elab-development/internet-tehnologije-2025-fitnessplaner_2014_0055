@@ -59,4 +59,20 @@ async function createWorkoutPlan(req, res) {
   }
 }
 
-module.exports = { createWorkoutPlan };
+async function deleteWorkoutPlan(req, res) {
+  const userId = req.userId;
+  const id = Number(req.params.id);
+
+  if (!isPositiveInteger(id)) {
+    return res.status(400).json({ message: 'invalid id' });
+  }
+
+  const deleted = await WorkoutPlan.destroy({ where: { id, userId } });
+  if (deleted === 0) {
+    return res.status(404).json({ message: 'workout plan not found' });
+  }
+
+  return res.status(204).end();
+}
+
+module.exports = { createWorkoutPlan, deleteWorkoutPlan };

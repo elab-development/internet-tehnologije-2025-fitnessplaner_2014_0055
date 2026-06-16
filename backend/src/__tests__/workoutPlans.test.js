@@ -10,6 +10,7 @@ jest.mock('../models', () => ({
   WorkoutPlan: {
     create: jest.fn(),
     findByPk: jest.fn(),
+    destroy: jest.fn(),
   },
   WorkoutItem: {
     bulkCreate: jest.fn(),
@@ -40,6 +41,7 @@ beforeEach(() => {
   WorkoutPlan.create.mockResolvedValue({ id: 10 });
   WorkoutItem.bulkCreate.mockResolvedValue([]);
   WorkoutPlan.findByPk.mockResolvedValue({ id: 10, userId: 1, date: '2026-06-17', WorkoutItems: [] });
+  WorkoutPlan.destroy.mockResolvedValue(1);
 });
 
 describe('POST /api/workout-plans', () => {
@@ -124,5 +126,36 @@ describe('POST /api/workout-plans', () => {
 
     expect(res.status).toBe(400);
     expect(WorkoutPlan.create).not.toHaveBeenCalled();
+  });
+});
+
+describe('DELETE /api/workout-plans/:id', () => {
+  test('deletes a plan owned by the user and returns 204', async () => {
+    const res = await request(app).delete('/api/workout-plans/10').set('Authorization', auth);
+
+    expect(res.status).toBe(204);
+    expect(WorkoutPlan.destroy).toHaveBeenCalledWith({ where: { id: 10, userId: 1 } });
+  });
+
+  test('returns 404 when the plan does not exist or is owned by another user', async () => {
+    WorkoutPlan.destroy.mockResolvedValue(0);
+
+    const res = await request(app).delete('/api/workout-plans/10').set('Authorization', auth);
+
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 400 for a non-numeric id', async () => {
+    const res = await request(app).delete('/api/workout-plans/abc').set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.destroy).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app).delete('/api/workout-plans/10');
+
+    expect(res.status).toBe(401);
+    expect(WorkoutPlan.destroy).not.toHaveBeenCalled();
   });
 });
