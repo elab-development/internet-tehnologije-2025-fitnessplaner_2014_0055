@@ -1,15 +1,11 @@
 const { Sequelize } = require('sequelize');
+const { db } = require('./env');
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || 'fitness_planer',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || '',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql',
-    logging: false,
-  }
-);
+const sequelize = new Sequelize(db.name, db.user, db.password, {
+  host: db.host,
+  port: db.port,
+  dialect: db.dialect,
+  logging: false,
+});
 
 module.exports = sequelize;
