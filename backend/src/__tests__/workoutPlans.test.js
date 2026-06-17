@@ -89,14 +89,25 @@ describe('POST /api/workout-plans', () => {
     expect(WorkoutPlan.create).not.toHaveBeenCalled();
   });
 
-  test('returns 400 when items is empty', async () => {
+  test('creates a plan with no items and returns 201', async () => {
     const res = await request(app)
       .post('/api/workout-plans')
       .set('Authorization', auth)
       .send({ ...validBody, items: [] });
 
-    expect(res.status).toBe(400);
-    expect(WorkoutPlan.create).not.toHaveBeenCalled();
+    expect(res.status).toBe(201);
+    expect(res.body.id).toBe(10);
+    expect(WorkoutPlan.create).toHaveBeenCalledTimes(1);
+    expect(WorkoutItem.bulkCreate).not.toHaveBeenCalled();
+  });
+
+  test('creates a plan when items is omitted and returns 201', async () => {
+    const { items, ...body } = validBody;
+    const res = await request(app).post('/api/workout-plans').set('Authorization', auth).send(body);
+
+    expect(res.status).toBe(201);
+    expect(WorkoutPlan.create).toHaveBeenCalledTimes(1);
+    expect(WorkoutItem.bulkCreate).not.toHaveBeenCalled();
   });
 
   test('returns 400 when an item has non-positive sets', async () => {

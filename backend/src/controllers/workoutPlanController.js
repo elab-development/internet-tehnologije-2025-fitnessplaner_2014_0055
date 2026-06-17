@@ -6,14 +6,15 @@ function isPositiveInteger(value) {
 
 async function createWorkoutPlan(req, res) {
   const userId = req.userId;
-  const { name, date, items } = req.body;
+  const { name, date } = req.body;
+  const items = req.body.items ?? [];
 
   if (!date) {
     return res.status(400).json({ message: 'date is required' });
   }
 
-  if (!Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ message: 'items must contain at least one exercise' });
+  if (!Array.isArray(items)) {
+    return res.status(400).json({ message: 'items must be an array' });
   }
 
   for (const item of items) {
@@ -24,25 +25,29 @@ async function createWorkoutPlan(req, res) {
     }
   }
 
-  const exerciseIds = [...new Set(items.map((item) => item.exerciseId))];
-  const existing = await Exercise.findAll({ where: { id: exerciseIds } });
-  if (existing.length !== exerciseIds.length) {
-    return res.status(400).json({ message: 'one or more exercises do not exist' });
+  if (items.length > 0) {
+    const exerciseIds = [...new Set(items.map((item) => item.exerciseId))];
+    const existing = await Exercise.findAll({ where: { id: exerciseIds } });
+    if (existing.length !== exerciseIds.length) {
+      return res.status(400).json({ message: 'one or more exercises do not exist' });
+    }
   }
 
   try {
     const plan = await sequelize.transaction(async (transaction) => {
       const workoutPlan = await WorkoutPlan.create({ name, date, userId }, { transaction });
 
-      await WorkoutItem.bulkCreate(
-        items.map((item) => ({
-          workoutPlanId: workoutPlan.id,
-          exerciseId: item.exerciseId,
-          sets: item.sets,
-          reps: item.reps,
-        })),
-        { transaction },
-      );
+      if (items.length > 0) {
+        await WorkoutItem.bulkCreate(
+          items.map((item) => ({
+            workoutPlanId: workoutPlan.id,
+            exerciseId: item.exerciseId,
+            sets: item.sets,
+            reps: item.reps,
+          })),
+          { transaction },
+        );
+      }
 
       return WorkoutPlan.findByPk(workoutPlan.id, {
         include: [WorkoutItem],
