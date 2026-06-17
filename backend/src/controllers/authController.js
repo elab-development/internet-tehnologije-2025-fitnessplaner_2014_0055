@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const { Op } = require('sequelize');
+const { User, JwtBlacklist } = require('../models');
 const env = require('../config/env');
 
 function signToken(userId) {
@@ -55,4 +56,15 @@ async function login(req, res) {
   });
 }
 
-module.exports = { register, login };
+async function logout(req, res) {
+  const token = req.headers.authorization.slice(7);
+  const decoded = jwt.decode(token);
+  const expiresAt = new Date(decoded.exp * 1000);
+
+  await JwtBlacklist.findOrCreate({ where: { token }, defaults: { token, expiresAt } });
+  await JwtBlacklist.destroy({ where: { expiresAt: { [Op.lt]: new Date() } } });
+
+  return res.status(200).json({ message: 'Logged out' });
+}
+
+module.exports = { register, login, logout };

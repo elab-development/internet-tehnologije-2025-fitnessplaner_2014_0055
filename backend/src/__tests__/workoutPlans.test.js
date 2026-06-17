@@ -23,9 +23,12 @@ jest.mock('../models', () => ({
   Exercise: {
     findAll: jest.fn(),
   },
+  JwtBlacklist: {
+    findOne: jest.fn(),
+  },
 }));
 
-const { WorkoutPlan, WorkoutItem, Exercise } = require('../models');
+const { WorkoutPlan, WorkoutItem, Exercise, JwtBlacklist } = require('../models');
 const app = require('../app');
 
 const token = jwt.sign({ id: 1 }, 'test-secret');
@@ -42,6 +45,7 @@ const validBody = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  JwtBlacklist.findOne.mockResolvedValue(null);
   Exercise.findAll.mockImplementation(({ where }) => Promise.resolve(where.id.map((id) => ({ id }))));
   WorkoutPlan.create.mockResolvedValue({ id: 10 });
   WorkoutItem.bulkCreate.mockResolvedValue([]);

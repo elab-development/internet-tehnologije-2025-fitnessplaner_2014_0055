@@ -4,6 +4,7 @@ const Exercise = require('./Exercise');
 const WorkoutPlan = require('./WorkoutPlan');
 const WorkoutItem = require('./WorkoutItem');
 const DailyLog = require('./DailyLog');
+const JwtBlacklist = require('./JwtBlacklist');
 
 User.hasMany(WorkoutPlan, { foreignKey: 'userId' });
 WorkoutPlan.belongsTo(User, { foreignKey: 'userId' });
@@ -24,4 +25,5 @@ module.exports = {
   WorkoutPlan,
   WorkoutItem,
   DailyLog,
+  JwtBlacklist,
 };

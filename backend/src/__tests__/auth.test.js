@@ -7,10 +7,16 @@ jest.mock('../models', () => ({
     create: jest.fn(),
     findOne: jest.fn(),
   },
+  JwtBlacklist: {
+    findOne: jest.fn(),
+    findOrCreate: jest.fn(),
+    destroy: jest.fn(),
+  },
 }));
 
 const bcrypt = require('bcryptjs');
-const { User } = require('../models');
+const jwt = require('jsonwebtoken');
+const { User, JwtBlacklist } = require('../models');
 const app = require('../app');
 
 beforeEach(() => {
@@ -95,6 +101,43 @@ describe('POST /api/auth/login', () => {
     const res = await request(app)
       .post('/api/auth/login')
       .send({ email: 'nobody@example.com', password: 'secret123' });
+
+    expect(res.status).toBe(401);
+  });
+});
+
+describe('POST /api/auth/logout', () => {
+  const signToken = () => jwt.sign({ id: 1 }, 'test-secret', { expiresIn: '1d' });
+
+  test('blacklists a valid token and returns 200', async () => {
+    JwtBlacklist.findOne.mockResolvedValue(null);
+    JwtBlacklist.findOrCreate.mockResolvedValue([{}, true]);
+    JwtBlacklist.destroy.mockResolvedValue(0);
+    const token = signToken();
+
+    const res = await request(app)
+      .post('/api/auth/logout')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ message: 'Logged out' });
+    expect(JwtBlacklist.findOrCreate.mock.calls[0][0].where.token).toBe(token);
+  });
+
+  test('returns 401 when the token is already revoked', async () => {
+    JwtBlacklist.findOne.mockResolvedValue({ token: 'revoked' });
+    const token = signToken();
+
+    const res = await request(app)
+      .post('/api/auth/logout')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(401);
+    expect(JwtBlacklist.findOrCreate).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 when no token is provided', async () => {
+    const res = await request(app).post('/api/auth/logout');
 
     expect(res.status).toBe(401);
   });
