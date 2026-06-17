@@ -17,9 +17,6 @@ WorkoutItem.belongsTo(Exercise, { foreignKey: 'exerciseId' });
 User.hasMany(DailyLog, { foreignKey: 'userId' });
 DailyLog.belongsTo(User, { foreignKey: 'userId' });
 
-WorkoutPlan.hasOne(DailyLog, { foreignKey: 'workoutPlanId' });
-DailyLog.belongsTo(WorkoutPlan, { foreignKey: 'workoutPlanId' });
-
 module.exports = {
   sequelize,
   User,
