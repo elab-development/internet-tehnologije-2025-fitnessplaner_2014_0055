@@ -11,6 +11,7 @@ jest.mock('../models', () => ({
     create: jest.fn(),
     findByPk: jest.fn(),
     findOne: jest.fn(),
+    findAll: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
   },
@@ -54,6 +55,52 @@ beforeEach(() => {
   WorkoutItem.update.mockResolvedValue([1]);
   WorkoutItem.destroy.mockResolvedValue(1);
   WorkoutPlan.destroy.mockResolvedValue(1);
+  WorkoutPlan.findAll.mockResolvedValue([
+    { id: 10, userId: 1, date: '2026-06-17', WorkoutItems: [{ id: 100, exerciseId: 1, sets: 3, reps: 10 }] },
+  ]);
+});
+
+describe('GET /api/workout-plans', () => {
+  test('returns 200 with the plans for a valid date', async () => {
+    const res = await request(app).get('/api/workout-plans?date=2026-06-17').set('Authorization', auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].id).toBe(10);
+    expect(WorkoutPlan.findAll).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { date: '2026-06-17', userId: 1 } }),
+    );
+  });
+
+  test('returns 200 with an empty array when no plans match', async () => {
+    WorkoutPlan.findAll.mockResolvedValue([]);
+
+    const res = await request(app).get('/api/workout-plans?date=2026-06-17').set('Authorization', auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([]);
+  });
+
+  test('returns 400 when date is missing', async () => {
+    const res = await request(app).get('/api/workout-plans').set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+  });
+
+  test('returns 400 for an invalid date format', async () => {
+    const res = await request(app).get('/api/workout-plans?date=06-17-2026').set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app).get('/api/workout-plans?date=2026-06-17');
+
+    expect(res.status).toBe(401);
+    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+  });
 });
 
 describe('POST /api/workout-plans', () => {

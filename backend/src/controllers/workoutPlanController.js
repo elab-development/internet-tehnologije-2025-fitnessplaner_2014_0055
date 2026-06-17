@@ -4,6 +4,18 @@ function isPositiveInteger(value) {
   return Number.isInteger(value) && value > 0;
 }
 
+async function getWorkoutPlansByDate(req, res) {
+  const userId = req.userId;
+  const { date } = req.query;
+
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) {
+    return res.status(400).json({ message: 'valid date query param (YYYY-MM-DD) is required' });
+  }
+
+  const plans = await WorkoutPlan.findAll({ where: { date, userId }, include: [WorkoutItem] });
+  return res.status(200).json(plans);
+}
+
 async function createWorkoutPlan(req, res) {
   const userId = req.userId;
   const { name, date } = req.body;
@@ -171,4 +183,4 @@ async function deleteWorkoutPlan(req, res) {
   return res.status(204).end();
 }
 
-module.exports = { createWorkoutPlan, updateWorkoutPlan, deleteWorkoutPlan };
+module.exports = { getWorkoutPlansByDate, createWorkoutPlan, updateWorkoutPlan, deleteWorkoutPlan };
