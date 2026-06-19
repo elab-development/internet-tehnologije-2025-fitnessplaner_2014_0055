@@ -35,9 +35,9 @@ const exercises = [
   ['Dumbbell Curl', ['biceps'], 'Dumbbells curled to the shoulders.', yt('XE_pHwbst04')],
   ['Hammer Curl', ['biceps', 'forearms'], 'Neutral-grip dumbbell curl targeting the biceps and forearms.', yt('BRVDS6HVR9Q')],
   ['Preacher Curl', ['biceps'], 'Curl performed against a preacher bench to isolate the biceps.', yt('BPmUhDtdQfw')],
-  ['Tricep Pushdown', ['triceps'], 'Cable pushed down to extend the elbows and work the triceps.', yt('2-LAMcpzODU')],
+  ['Triceps Pushdown', ['triceps'], 'Cable pushed down to extend the elbows and work the triceps.', yt('2-LAMcpzODU')],
   ['Skull Crusher', ['triceps'], 'Lying barbell or dumbbell extension to the forehead.', yt('d_KZxkY_0cM')],
-  ['Overhead Tricep Extension', ['triceps'], 'Weight extended overhead to stretch and work the triceps.', yt('fYqswDVbJDg')],
+  ['Overhead Triceps Extension', ['triceps'], 'Weight extended overhead to stretch and work the triceps.', yt('fYqswDVbJDg')],
   ['Cable Crunch', ['core'], 'Kneeling cable crunch loading the abdominals.', yt('AV5PmZJIrrw')],
 
   // --- Street workout / calisthenics ---
