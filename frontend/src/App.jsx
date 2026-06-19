@@ -1,5 +1,16 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import Login from './pages/Login'
+import Register from './pages/Register'
+
 function App() {
-  return <h1>Fitness Planner</h1>
+  return (
+    <Routes>
+      <Route path="/" element={<h1>Fitness Planner</h1>} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
 
 export default App
