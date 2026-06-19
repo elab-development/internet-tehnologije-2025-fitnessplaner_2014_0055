@@ -4,6 +4,8 @@ const Exercise = require('./Exercise');
 const WorkoutPlan = require('./WorkoutPlan');
 const WorkoutItem = require('./WorkoutItem');
 const DailyLog = require('./DailyLog');
+const Food = require('./Food');
+const FoodEntry = require('./FoodEntry');
 const JwtBlacklist = require('./JwtBlacklist');
 
 User.hasMany(WorkoutPlan, { foreignKey: 'userId' });
@@ -18,6 +20,12 @@ WorkoutItem.belongsTo(Exercise, { foreignKey: 'exerciseId' });
 User.hasMany(DailyLog, { foreignKey: 'userId' });
 DailyLog.belongsTo(User, { foreignKey: 'userId' });
 
+DailyLog.hasMany(FoodEntry, { foreignKey: 'dailyLogId' });
+FoodEntry.belongsTo(DailyLog, { foreignKey: 'dailyLogId' });
+
+Food.hasMany(FoodEntry, { foreignKey: 'foodId' });
+FoodEntry.belongsTo(Food, { foreignKey: 'foodId' });
+
 module.exports = {
   sequelize,
   User,
@@ -25,5 +33,7 @@ module.exports = {
   WorkoutPlan,
   WorkoutItem,
   DailyLog,
+  Food,
+  FoodEntry,
   JwtBlacklist,
 };
