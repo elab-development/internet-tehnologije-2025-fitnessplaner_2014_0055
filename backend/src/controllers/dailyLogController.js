@@ -20,6 +20,24 @@ async function getDailyLogByDate(req, res) {
   return res.status(200).json(log);
 }
 
+async function createDailyLog(req, res) {
+  const userId = req.userId;
+  const { date } = req.body;
+
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) {
+    return res.status(400).json({ message: 'valid date (YYYY-MM-DD) is required' });
+  }
+
+  const existing = await DailyLog.findOne({ where: { date, userId } });
+  if (existing) {
+    return res.status(409).json({ message: 'daily log for this date already exists' });
+  }
+
+  const log = await DailyLog.create({ date, userId });
+
+  return res.status(201).json(log);
+}
+
 async function addFoodEntry(req, res) {
   const userId = req.userId;
   const dailyLogId = Number(req.params.dailyLogId);
@@ -115,4 +133,4 @@ async function removeFoodEntry(req, res) {
   return res.status(204).end();
 }
 
-module.exports = { getDailyLogByDate, addFoodEntry, updateFoodEntry, removeFoodEntry };
+module.exports = { getDailyLogByDate, createDailyLog, addFoodEntry, updateFoodEntry, removeFoodEntry };
