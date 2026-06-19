@@ -38,6 +38,31 @@ async function createDailyLog(req, res) {
   return res.status(201).json(log);
 }
 
+async function updateDailyLog(req, res) {
+  const userId = req.userId;
+  const dailyLogId = Number(req.params.dailyLogId);
+  const { hydration } = req.body;
+
+  if (!isPositiveInteger(dailyLogId)) {
+    return res.status(400).json({ message: 'invalid dailyLogId' });
+  }
+
+  if (hydration !== undefined && (!Number.isInteger(hydration) || hydration < 0)) {
+    return res.status(400).json({ message: 'hydration must be a non-negative integer' });
+  }
+
+  const log = await DailyLog.findOne({ where: { id: dailyLogId, userId } });
+  if (!log) {
+    return res.status(404).json({ message: 'daily log not found' });
+  }
+
+  if (hydration !== undefined) {
+    await log.update({ hydration });
+  }
+
+  return res.status(200).json(log);
+}
+
 async function addFoodEntry(req, res) {
   const userId = req.userId;
   const dailyLogId = Number(req.params.dailyLogId);
@@ -133,4 +158,4 @@ async function removeFoodEntry(req, res) {
   return res.status(204).end();
 }
 
-module.exports = { getDailyLogByDate, createDailyLog, addFoodEntry, updateFoodEntry, removeFoodEntry };
+module.exports = { getDailyLogByDate, createDailyLog, updateDailyLog, addFoodEntry, updateFoodEntry, removeFoodEntry };
