@@ -30,6 +30,11 @@ jest.mock('../models', () => ({
   JwtBlacklist: {
     findOne: jest.fn(),
   },
+  DailyLog: {},
+  Food: {},
+  FoodEntry: {
+    addHook: jest.fn(),
+  },
 }));
 
 const { WorkoutPlan, WorkoutItem, Exercise, JwtBlacklist } = require('../models');
@@ -217,6 +222,16 @@ describe('POST /api/workout-plans', () => {
     expect(res.status).toBe(400);
     expect(WorkoutPlan.create).not.toHaveBeenCalled();
   });
+
+  test('returns 409 when a workout already exists for the date', async () => {
+    const err = new Error('unique');
+    err.name = 'SequelizeUniqueConstraintError';
+    WorkoutPlan.create.mockRejectedValue(err);
+
+    const res = await request(app).post('/api/workout-plans').set('Authorization', auth).send(validBody);
+
+    expect(res.status).toBe(409);
+  });
 });
 
 describe('PUT /api/workout-plans/:id', () => {
@@ -243,6 +258,19 @@ describe('PUT /api/workout-plans/:id', () => {
 
     expect(res.status).toBe(404);
     expect(WorkoutPlan.update).not.toHaveBeenCalled();
+  });
+
+  test('returns 409 when another workout already exists for the new date', async () => {
+    const err = new Error('unique');
+    err.name = 'SequelizeUniqueConstraintError';
+    WorkoutPlan.update.mockRejectedValue(err);
+
+    const res = await request(app)
+      .put('/api/workout-plans/10')
+      .set('Authorization', auth)
+      .send({ date: '2026-06-18' });
+
+    expect(res.status).toBe(409);
   });
 
   test('returns 400 for a non-numeric id', async () => {

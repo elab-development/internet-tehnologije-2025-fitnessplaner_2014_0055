@@ -9,6 +9,10 @@ const WorkoutPlan = sequelize.define('WorkoutPlan', {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
+}, {
+  indexes: [
+    { unique: true, fields: ['userId', 'date'], name: 'workout_plans_user_date_unique' },
+  ],
 });
 
 module.exports = WorkoutPlan;

@@ -69,6 +69,9 @@ async function createWorkoutPlan(req, res) {
 
     return res.status(201).json(plan);
   } catch (err) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ message: 'a workout already exists for this date' });
+    }
     if (err.name === 'SequelizeValidationError') {
       return res.status(400).json({ message: 'Invalid input' });
     }
@@ -94,7 +97,14 @@ async function updateWorkoutPlan(req, res) {
     return res.status(404).json({ message: 'workout plan not found' });
   }
 
-  await WorkoutPlan.update({ name, date }, { where: { id } });
+  try {
+    await WorkoutPlan.update({ name, date }, { where: { id } });
+  } catch (err) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ message: 'a workout already exists for this date' });
+    }
+    throw err;
+  }
 
   const updated = await WorkoutPlan.findByPk(id, { include: [WorkoutItem] });
   return res.status(200).json(updated);
