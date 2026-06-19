@@ -17,11 +17,15 @@ jest.mock('../models', () => ({
   },
   WorkoutItem: {
     bulkCreate: jest.fn(),
+    create: jest.fn(),
+    findByPk: jest.fn(),
+    findOne: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
   },
   Exercise: {
     findAll: jest.fn(),
+    findByPk: jest.fn(),
   },
   JwtBlacklist: {
     findOne: jest.fn(),
@@ -58,6 +62,18 @@ beforeEach(() => {
   WorkoutPlan.update.mockResolvedValue([1]);
   WorkoutItem.update.mockResolvedValue([1]);
   WorkoutItem.destroy.mockResolvedValue(1);
+  WorkoutItem.create.mockResolvedValue({ id: 200 });
+  WorkoutItem.findByPk.mockResolvedValue({ id: 200, exerciseId: 1, sets: 3, reps: 10 });
+  WorkoutItem.findOne.mockResolvedValue({
+    id: 200,
+    workoutPlanId: 10,
+    exerciseId: 1,
+    sets: 3,
+    reps: 10,
+    update: jest.fn(),
+    destroy: jest.fn(),
+  });
+  Exercise.findByPk.mockResolvedValue({ id: 1 });
   WorkoutPlan.destroy.mockResolvedValue(1);
   WorkoutPlan.findAll.mockResolvedValue([
     { id: 10, userId: 1, date: '2026-06-17', WorkoutItems: [{ id: 100, exerciseId: 1, sets: 3, reps: 10 }] },
@@ -204,88 +220,17 @@ describe('POST /api/workout-plans', () => {
 });
 
 describe('PUT /api/workout-plans/:id', () => {
-  test('updates an existing item in place and returns 200', async () => {
+  test('updates the plan name and date and returns 200', async () => {
     const res = await request(app)
       .put('/api/workout-plans/10')
       .set('Authorization', auth)
-      .send({ name: 'Push Day', date: '2026-06-18', items: [{ id: 100, exerciseId: 1, sets: 5, reps: 5 }] });
+      .send({ name: 'Pull Day', date: '2026-06-18' });
 
     expect(res.status).toBe(200);
-    expect(WorkoutItem.update).toHaveBeenCalledWith(
-      { exerciseId: 1, sets: 5, reps: 5 },
-      expect.objectContaining({ where: { id: 100 } }),
+    expect(WorkoutPlan.update).toHaveBeenCalledWith(
+      { name: 'Pull Day', date: '2026-06-18' },
+      { where: { id: 10 } },
     );
-    expect(WorkoutItem.bulkCreate).not.toHaveBeenCalled();
-    expect(WorkoutItem.destroy).not.toHaveBeenCalled();
-  });
-
-  test('adds a new item via bulkCreate', async () => {
-    await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({
-        date: '2026-06-18',
-        items: [
-          { id: 100, exerciseId: 1, sets: 3, reps: 10 },
-          { exerciseId: 2, sets: 4, reps: 8 },
-        ],
-      });
-
-    const created = WorkoutItem.bulkCreate.mock.calls[0][0];
-    expect(created).toHaveLength(1);
-    expect(created[0]).toMatchObject({ workoutPlanId: 10, exerciseId: 2, sets: 4, reps: 8 });
-    expect(WorkoutItem.destroy).not.toHaveBeenCalled();
-  });
-
-  test('removes an item omitted from the payload', async () => {
-    await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [{ exerciseId: 2, sets: 4, reps: 8 }] });
-
-    expect(WorkoutItem.destroy).toHaveBeenCalledWith(expect.objectContaining({ where: { id: [100] } }));
-    expect(WorkoutItem.bulkCreate).toHaveBeenCalledTimes(1);
-  });
-
-  test('handles mixed create, update and delete in one request', async () => {
-    WorkoutPlan.findOne.mockResolvedValue({
-      id: 10,
-      userId: 1,
-      WorkoutItems: [
-        { id: 100, exerciseId: 1, sets: 3, reps: 10 },
-        { id: 101, exerciseId: 2, sets: 4, reps: 8 },
-      ],
-    });
-
-    await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({
-        date: '2026-06-18',
-        items: [
-          { id: 100, exerciseId: 1, sets: 5, reps: 5 },
-          { exerciseId: 2, sets: 4, reps: 8 },
-        ],
-      });
-
-    expect(WorkoutItem.update).toHaveBeenCalledWith(
-      { exerciseId: 1, sets: 5, reps: 5 },
-      expect.objectContaining({ where: { id: 100 } }),
-    );
-    expect(WorkoutItem.destroy).toHaveBeenCalledWith(expect.objectContaining({ where: { id: [101] } }));
-    expect(WorkoutItem.bulkCreate.mock.calls[0][0]).toHaveLength(1);
-  });
-
-  test('clears all items when items is empty', async () => {
-    const res = await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [] });
-
-    expect(res.status).toBe(200);
-    expect(WorkoutItem.destroy).toHaveBeenCalledWith(expect.objectContaining({ where: { id: [100] } }));
-    expect(WorkoutItem.bulkCreate).not.toHaveBeenCalled();
-    expect(WorkoutItem.update).not.toHaveBeenCalled();
   });
 
   test('returns 404 when the plan does not exist or is owned by another user', async () => {
@@ -294,7 +239,7 @@ describe('PUT /api/workout-plans/:id', () => {
     const res = await request(app)
       .put('/api/workout-plans/10')
       .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [{ exerciseId: 1, sets: 3, reps: 10 }] });
+      .send({ date: '2026-06-18' });
 
     expect(res.status).toBe(404);
     expect(WorkoutPlan.update).not.toHaveBeenCalled();
@@ -304,7 +249,7 @@ describe('PUT /api/workout-plans/:id', () => {
     const res = await request(app)
       .put('/api/workout-plans/abc')
       .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [] });
+      .send({ date: '2026-06-18' });
 
     expect(res.status).toBe(400);
     expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
@@ -314,51 +259,197 @@ describe('PUT /api/workout-plans/:id', () => {
     const res = await request(app)
       .put('/api/workout-plans/10')
       .set('Authorization', auth)
-      .send({ items: [{ exerciseId: 1, sets: 3, reps: 10 }] });
-
-    expect(res.status).toBe(400);
-    expect(WorkoutPlan.update).not.toHaveBeenCalled();
-  });
-
-  test('returns 400 when an item has non-positive reps', async () => {
-    const res = await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [{ exerciseId: 1, sets: 3, reps: 0 }] });
-
-    expect(res.status).toBe(400);
-    expect(WorkoutPlan.update).not.toHaveBeenCalled();
-  });
-
-  test('returns 400 when an exerciseId does not exist', async () => {
-    Exercise.findAll.mockResolvedValue([]);
-
-    const res = await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [{ exerciseId: 99, sets: 3, reps: 10 }] });
-
-    expect(res.status).toBe(400);
-    expect(WorkoutPlan.update).not.toHaveBeenCalled();
-  });
-
-  test('returns 400 when an item id does not belong to the plan', async () => {
-    const res = await request(app)
-      .put('/api/workout-plans/10')
-      .set('Authorization', auth)
-      .send({ date: '2026-06-18', items: [{ id: 999, exerciseId: 1, sets: 3, reps: 10 }] });
+      .send({ name: 'Pull Day' });
 
     expect(res.status).toBe(400);
     expect(WorkoutPlan.update).not.toHaveBeenCalled();
   });
 
   test('returns 401 without a token', async () => {
-    const res = await request(app)
-      .put('/api/workout-plans/10')
-      .send({ date: '2026-06-18', items: [] });
+    const res = await request(app).put('/api/workout-plans/10').send({ date: '2026-06-18' });
 
     expect(res.status).toBe(401);
     expect(WorkoutPlan.update).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /api/workout-plans/:workoutPlanId/exercise', () => {
+  const itemBody = { exerciseId: 1, sets: 3, reps: 10 };
+
+  test('adds an item and returns 201 with the created item', async () => {
+    const res = await request(app)
+      .post('/api/workout-plans/10/exercise')
+      .set('Authorization', auth)
+      .send(itemBody);
+
+    expect(res.status).toBe(201);
+    expect(res.body.id).toBe(200);
+    expect(WorkoutItem.create).toHaveBeenCalledWith({
+      workoutPlanId: 10,
+      exerciseId: 1,
+      sets: 3,
+      reps: 10,
+    });
+  });
+
+  test('returns 404 when the plan does not exist or is owned by another user', async () => {
+    WorkoutPlan.findOne.mockResolvedValue(null);
+
+    const res = await request(app)
+      .post('/api/workout-plans/10/exercise')
+      .set('Authorization', auth)
+      .send(itemBody);
+
+    expect(res.status).toBe(404);
+    expect(WorkoutItem.create).not.toHaveBeenCalled();
+  });
+
+  test('returns 400 when the exercise does not exist', async () => {
+    Exercise.findByPk.mockResolvedValue(null);
+
+    const res = await request(app)
+      .post('/api/workout-plans/10/exercise')
+      .set('Authorization', auth)
+      .send(itemBody);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutItem.create).not.toHaveBeenCalled();
+  });
+
+  test('returns 400 when sets is non-positive', async () => {
+    const res = await request(app)
+      .post('/api/workout-plans/10/exercise')
+      .set('Authorization', auth)
+      .send({ ...itemBody, sets: 0 });
+
+    expect(res.status).toBe(400);
+    expect(WorkoutItem.create).not.toHaveBeenCalled();
+  });
+
+  test('returns 400 when exerciseId is missing', async () => {
+    const res = await request(app)
+      .post('/api/workout-plans/10/exercise')
+      .set('Authorization', auth)
+      .send({ sets: 3, reps: 10 });
+
+    expect(res.status).toBe(400);
+    expect(WorkoutItem.create).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app).post('/api/workout-plans/10/exercise').send(itemBody);
+
+    expect(res.status).toBe(401);
+    expect(WorkoutItem.create).not.toHaveBeenCalled();
+  });
+});
+
+describe('PATCH /api/workout-plans/:workoutPlanId/exercise/:itemId', () => {
+  test('updates sets and reps and returns 200', async () => {
+    const item = {
+      id: 200,
+      workoutPlanId: 10,
+      update: jest.fn(),
+      destroy: jest.fn(),
+    };
+    WorkoutItem.findOne.mockResolvedValue(item);
+
+    const res = await request(app)
+      .patch('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth)
+      .send({ sets: 5, reps: 5 });
+
+    expect(res.status).toBe(200);
+    expect(item.update).toHaveBeenCalledWith({ sets: 5, reps: 5 });
+  });
+
+  test('returns 404 when the plan does not exist or is owned by another user', async () => {
+    WorkoutPlan.findOne.mockResolvedValue(null);
+
+    const res = await request(app)
+      .patch('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth)
+      .send({ sets: 5, reps: 5 });
+
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 404 when the item does not belong to the plan', async () => {
+    WorkoutItem.findOne.mockResolvedValue(null);
+
+    const res = await request(app)
+      .patch('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth)
+      .send({ sets: 5, reps: 5 });
+
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 400 when reps is non-positive', async () => {
+    const res = await request(app)
+      .patch('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth)
+      .send({ sets: 5, reps: 0 });
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app)
+      .patch('/api/workout-plans/10/exercise/200')
+      .send({ sets: 5, reps: 5 });
+
+    expect(res.status).toBe(401);
+  });
+});
+
+describe('DELETE /api/workout-plans/:workoutPlanId/exercise/:itemId', () => {
+  test('removes the item and returns 204', async () => {
+    const item = { id: 200, workoutPlanId: 10, update: jest.fn(), destroy: jest.fn() };
+    WorkoutItem.findOne.mockResolvedValue(item);
+
+    const res = await request(app)
+      .delete('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(204);
+    expect(item.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  test('returns 404 when the plan does not exist or is owned by another user', async () => {
+    WorkoutPlan.findOne.mockResolvedValue(null);
+
+    const res = await request(app)
+      .delete('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 404 when the item does not belong to the plan', async () => {
+    WorkoutItem.findOne.mockResolvedValue(null);
+
+    const res = await request(app)
+      .delete('/api/workout-plans/10/exercise/200')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 400 for a non-numeric itemId', async () => {
+    const res = await request(app)
+      .delete('/api/workout-plans/10/exercise/abc')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app).delete('/api/workout-plans/10/exercise/200');
+
+    expect(res.status).toBe(401);
   });
 });
 

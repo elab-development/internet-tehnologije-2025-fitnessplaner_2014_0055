@@ -79,8 +79,7 @@ async function createWorkoutPlan(req, res) {
 async function updateWorkoutPlan(req, res) {
   const userId = req.userId;
   const id = Number(req.params.id);
-  const { name, date} = req.body;
-  const items = req.body.items ?? [];
+  const { name, date } = req.body;
 
   if (!isPositiveInteger(id)) {
     return res.status(400).json({ message: 'invalid id' });
@@ -90,81 +89,110 @@ async function updateWorkoutPlan(req, res) {
     return res.status(400).json({ message: 'date is required' });
   }
 
-  if (!Array.isArray(items)) {
-    return res.status(400).json({ message: 'items must be an array' });
-  }
-
-  for (const item of items) {
-    if (!item || item.exerciseId === undefined || !isPositiveInteger(item.sets) || !isPositiveInteger(item.reps)) {
-      return res.status(400).json({
-        message: 'each item requires exerciseId and positive integer sets and reps',
-      });
-    }
-    if (item.id !== undefined && !isPositiveInteger(item.id)) {
-      return res.status(400).json({ message: 'invalid item id' });
-    }
-  }
-
-  const plan = await WorkoutPlan.findOne({ where: { id, userId }, include: [WorkoutItem] });
+  const plan = await WorkoutPlan.findOne({ where: { id, userId } });
   if (!plan) {
     return res.status(404).json({ message: 'workout plan not found' });
   }
 
-  const exerciseIds = [...new Set(items.map((item) => item.exerciseId))];
-  if (exerciseIds.length > 0) {
-    const existing = await Exercise.findAll({ where: { id: exerciseIds } });
-    if (existing.length !== exerciseIds.length) {
-      return res.status(400).json({ message: 'one or more exercises do not exist' });
-    }
+  await WorkoutPlan.update({ name, date }, { where: { id } });
+
+  const updated = await WorkoutPlan.findByPk(id, { include: [WorkoutItem] });
+  return res.status(200).json(updated);
+}
+
+async function addWorkoutItem(req, res) {
+  const userId = req.userId;
+  const workoutPlanId = Number(req.params.workoutPlanId);
+  const { exerciseId, sets, reps } = req.body;
+
+  if (!isPositiveInteger(workoutPlanId)) {
+    return res.status(400).json({ message: 'invalid workoutPlanId' });
   }
 
-  const existingItemIds = new Set(plan.WorkoutItems.map((item) => item.id));
-  if (items.some((item) => item.id !== undefined && !existingItemIds.has(item.id))) {
-    return res.status(400).json({ message: 'one or more items do not belong to this plan' });
+  if (!isPositiveInteger(exerciseId)) {
+    return res.status(400).json({ message: 'exerciseId must be a positive integer' });
   }
 
-  const toUpdate = items.filter((item) => item.id !== undefined);
-  const toCreate = items.filter((item) => item.id === undefined);
-  const incomingItemIds = new Set(toUpdate.map((item) => item.id));
-  const toDeleteIds = [...existingItemIds].filter((itemId) => !incomingItemIds.has(itemId));
-
-  try {
-    const updated = await sequelize.transaction(async (transaction) => {
-      await WorkoutPlan.update({ name, date }, { where: { id }, transaction });
-
-      if (toDeleteIds.length > 0) {
-        await WorkoutItem.destroy({ where: { id: toDeleteIds }, transaction });
-      }
-
-      for (const item of toUpdate) {
-        await WorkoutItem.update(
-          { exerciseId: item.exerciseId, sets: item.sets, reps: item.reps },
-          { where: { id: item.id }, transaction },
-        );
-      }
-
-      if (toCreate.length > 0) {
-        await WorkoutItem.bulkCreate(
-          toCreate.map((item) => ({
-            workoutPlanId: id,
-            exerciseId: item.exerciseId,
-            sets: item.sets,
-            reps: item.reps,
-          })),
-          { transaction },
-        );
-      }
-
-      return WorkoutPlan.findByPk(id, { include: [WorkoutItem], transaction });
-    });
-
-    return res.status(200).json(updated);
-  } catch (err) {
-    if (err.name === 'SequelizeValidationError') {
-      return res.status(400).json({ message: 'Invalid input' });
-    }
-    throw err;
+  if (!isPositiveInteger(sets) || !isPositiveInteger(reps)) {
+    return res.status(400).json({ message: 'sets and reps must be positive integers' });
   }
+
+  const plan = await WorkoutPlan.findOne({ where: { id: workoutPlanId, userId } });
+  if (!plan) {
+    return res.status(404).json({ message: 'workout plan not found' });
+  }
+
+  const exercise = await Exercise.findByPk(exerciseId);
+  if (!exercise) {
+    return res.status(400).json({ message: 'exercise does not exist' });
+  }
+
+  const item = await WorkoutItem.create({ workoutPlanId, exerciseId, sets, reps });
+
+  const created = await WorkoutItem.findByPk(item.id, { include: [Exercise] });
+  return res.status(201).json(created);
+}
+
+async function updateWorkoutItem(req, res) {
+  const userId = req.userId;
+  const workoutPlanId = Number(req.params.workoutPlanId);
+  const itemId = Number(req.params.itemId);
+  const { sets, reps } = req.body;
+
+  if (!isPositiveInteger(workoutPlanId)) {
+    return res.status(400).json({ message: 'invalid workoutPlanId' });
+  }
+
+  if (!isPositiveInteger(itemId)) {
+    return res.status(400).json({ message: 'invalid itemId' });
+  }
+
+  if (!isPositiveInteger(sets) || !isPositiveInteger(reps)) {
+    return res.status(400).json({ message: 'sets and reps must be positive integers' });
+  }
+
+  const plan = await WorkoutPlan.findOne({ where: { id: workoutPlanId, userId } });
+  if (!plan) {
+    return res.status(404).json({ message: 'workout plan not found' });
+  }
+
+  const item = await WorkoutItem.findOne({ where: { id: itemId, workoutPlanId } });
+  if (!item) {
+    return res.status(404).json({ message: 'workout item not found' });
+  }
+
+  await item.update({ sets, reps });
+
+  const updated = await WorkoutItem.findByPk(item.id, { include: [Exercise] });
+  return res.status(200).json(updated);
+}
+
+async function removeWorkoutItem(req, res) {
+  const userId = req.userId;
+  const workoutPlanId = Number(req.params.workoutPlanId);
+  const itemId = Number(req.params.itemId);
+
+  if (!isPositiveInteger(workoutPlanId)) {
+    return res.status(400).json({ message: 'invalid workoutPlanId' });
+  }
+
+  if (!isPositiveInteger(itemId)) {
+    return res.status(400).json({ message: 'invalid itemId' });
+  }
+
+  const plan = await WorkoutPlan.findOne({ where: { id: workoutPlanId, userId } });
+  if (!plan) {
+    return res.status(404).json({ message: 'workout plan not found' });
+  }
+
+  const item = await WorkoutItem.findOne({ where: { id: itemId, workoutPlanId } });
+  if (!item) {
+    return res.status(404).json({ message: 'workout item not found' });
+  }
+
+  await item.destroy();
+
+  return res.status(204).end();
 }
 
 async function deleteWorkoutPlan(req, res) {
@@ -183,4 +211,12 @@ async function deleteWorkoutPlan(req, res) {
   return res.status(204).end();
 }
 
-module.exports = { getWorkoutPlansByDate, createWorkoutPlan, updateWorkoutPlan, deleteWorkoutPlan };
+module.exports = {
+  getWorkoutPlansByDate,
+  createWorkoutPlan,
+  updateWorkoutPlan,
+  deleteWorkoutPlan,
+  addWorkoutItem,
+  updateWorkoutItem,
+  removeWorkoutItem,
+};
