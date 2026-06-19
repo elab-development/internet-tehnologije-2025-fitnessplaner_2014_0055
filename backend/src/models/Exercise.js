@@ -15,6 +15,10 @@ const Exercise = sequelize.define('Exercise', {
   description: {
     type: DataTypes.TEXT,
   },
+  videoURL: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Exercise;
