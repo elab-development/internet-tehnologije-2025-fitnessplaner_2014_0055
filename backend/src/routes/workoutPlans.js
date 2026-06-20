@@ -1,7 +1,8 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const {
-  getWorkoutPlansByDate,
+  getWorkoutPlanByDate,
+  getWorkoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
   deleteWorkoutPlan,
@@ -12,7 +13,8 @@ const {
 
 const router = express.Router();
 
-router.get('/', auth, getWorkoutPlansByDate);
+router.get('/', auth, getWorkoutPlanByDate);
+router.get('/:id', auth, getWorkoutPlanById);
 router.post('/', auth, createWorkoutPlan);
 router.put('/:id', auth, updateWorkoutPlan);
 router.delete('/:id', auth, deleteWorkoutPlan);

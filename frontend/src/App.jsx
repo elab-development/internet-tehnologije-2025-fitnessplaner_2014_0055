@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
+import WorkoutDetail from './pages/WorkoutDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -12,6 +13,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Home />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/workouts/:id"
+        element={
+          <ProtectedRoute>
+            <WorkoutDetail />
           </ProtectedRoute>
         }
       />

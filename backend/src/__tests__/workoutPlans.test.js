@@ -80,51 +80,92 @@ beforeEach(() => {
   });
   Exercise.findByPk.mockResolvedValue({ id: 1 });
   WorkoutPlan.destroy.mockResolvedValue(1);
-  WorkoutPlan.findAll.mockResolvedValue([
+  WorkoutPlan.findOne.mockResolvedValue(
     { id: 10, userId: 1, date: '2026-06-17', WorkoutItems: [{ id: 100, exerciseId: 1, sets: 3, reps: 10 }] },
-  ]);
+  );
 });
 
 describe('GET /api/workout-plans', () => {
-  test('returns 200 with the plans for a valid date', async () => {
+  test('returns 200 with the plan for a valid date', async () => {
     const res = await request(app).get('/api/workout-plans?date=2026-06-17').set('Authorization', auth);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
-    expect(res.body[0].id).toBe(10);
-    expect(WorkoutPlan.findAll).toHaveBeenCalledWith(
+    expect(res.body.id).toBe(10);
+    expect(WorkoutPlan.findOne).toHaveBeenCalledWith(
       expect.objectContaining({ where: { date: '2026-06-17', userId: 1 } }),
     );
   });
 
-  test('returns 200 with an empty array when no plans match', async () => {
-    WorkoutPlan.findAll.mockResolvedValue([]);
+  test('returns 200 with null when no plan matches', async () => {
+    WorkoutPlan.findOne.mockResolvedValue(null);
 
     const res = await request(app).get('/api/workout-plans?date=2026-06-17').set('Authorization', auth);
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual([]);
+    expect(res.body).toEqual(null);
   });
 
   test('returns 400 when date is missing', async () => {
     const res = await request(app).get('/api/workout-plans').set('Authorization', auth);
 
     expect(res.status).toBe(400);
-    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
   });
 
   test('returns 400 for an invalid date format', async () => {
     const res = await request(app).get('/api/workout-plans?date=06-17-2026').set('Authorization', auth);
 
     expect(res.status).toBe(400);
-    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
   });
 
   test('returns 401 without a token', async () => {
     const res = await request(app).get('/api/workout-plans?date=2026-06-17');
 
     expect(res.status).toBe(401);
-    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
+  });
+});
+
+describe('GET /api/workout-plans/:id', () => {
+  test('returns 200 with the plan and its exercises', async () => {
+    WorkoutPlan.findOne.mockResolvedValue({
+      id: 10,
+      userId: 1,
+      date: '2026-06-17',
+      WorkoutItems: [{ id: 100, sets: 3, reps: 10, Exercise: { id: 1, name: 'Bench Press' } }],
+    });
+
+    const res = await request(app).get('/api/workout-plans/10').set('Authorization', auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(10);
+    expect(res.body.WorkoutItems[0].Exercise.name).toBe('Bench Press');
+    expect(WorkoutPlan.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: 10, userId: 1 } }),
+    );
+  });
+
+  test('returns 404 when the plan does not exist or is owned by another user', async () => {
+    WorkoutPlan.findOne.mockResolvedValue(null);
+
+    const res = await request(app).get('/api/workout-plans/10').set('Authorization', auth);
+
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 400 for a non-numeric id', async () => {
+    const res = await request(app).get('/api/workout-plans/abc').set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app).get('/api/workout-plans/10');
+
+    expect(res.status).toBe(401);
+    expect(WorkoutPlan.findOne).not.toHaveBeenCalled();
   });
 });
 

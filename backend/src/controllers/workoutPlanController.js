@@ -4,7 +4,7 @@ function isPositiveInteger(value) {
   return Number.isInteger(value) && value > 0;
 }
 
-async function getWorkoutPlansByDate(req, res) {
+async function getWorkoutPlanByDate(req, res) {
   const userId = req.userId;
   const { date } = req.query;
 
@@ -12,8 +12,28 @@ async function getWorkoutPlansByDate(req, res) {
     return res.status(400).json({ message: 'valid date query param (YYYY-MM-DD) is required' });
   }
 
-  const plans = await WorkoutPlan.findAll({ where: { date, userId }, include: [WorkoutItem] });
-  return res.status(200).json(plans);
+  const plan = await WorkoutPlan.findOne({ where: { date, userId }, include: [WorkoutItem] });
+  return res.status(200).json(plan);
+}
+
+async function getWorkoutPlanById(req, res) {
+  const userId = req.userId;
+  const id = Number(req.params.id);
+
+  if (!isPositiveInteger(id)) {
+    return res.status(400).json({ message: 'invalid id' });
+  }
+
+  const plan = await WorkoutPlan.findOne({
+    where: { id, userId },
+    include: [{ model: WorkoutItem, include: [Exercise] }],
+  });
+
+  if (!plan) {
+    return res.status(404).json({ message: 'workout plan not found' });
+  }
+
+  return res.status(200).json(plan);
 }
 
 async function createWorkoutPlan(req, res) {
@@ -222,7 +242,8 @@ async function deleteWorkoutPlan(req, res) {
 }
 
 module.exports = {
-  getWorkoutPlansByDate,
+  getWorkoutPlanByDate,
+  getWorkoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
   deleteWorkoutPlan,
