@@ -4,8 +4,8 @@ const { Op } = require('sequelize');
 const { User, JwtBlacklist } = require('../models');
 const env = require('../config/env');
 
-function signToken(userId) {
-  return jwt.sign({ id: userId }, env.jwt.secret, {
+function signToken(userId, role) {
+  return jwt.sign({ id: userId, role }, env.jwt.secret, {
     expiresIn: env.jwt.expiresIn,
   });
 }
@@ -20,11 +20,11 @@ async function register(req, res) {
   try {
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({ username, email, password: passwordHash });
-    const token = signToken(user.id);
+    const token = signToken(user.id, user.role);
 
     return res.status(201).json({
       token,
-      user: { id: user.id, username: user.username, email: user.email },
+      user: { id: user.id, username: user.username, email: user.email, role: user.role },
     });
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
@@ -49,10 +49,10 @@ async function login(req, res) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  const token = signToken(user.id);
+  const token = signToken(user.id, user.role);
   return res.status(200).json({
     token,
-    user: { id: user.id, username: user.username, email: user.email },
+    user: { id: user.id, username: user.username, email: user.email, role: user.role },
   });
 }
 

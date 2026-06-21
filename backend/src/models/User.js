@@ -17,6 +17,11 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  role: {
+    type: DataTypes.ENUM('user', 'trainer', 'admin'),
+    allowNull: false,
+    defaultValue: 'user',
+  },
 });
 
 module.exports = User;

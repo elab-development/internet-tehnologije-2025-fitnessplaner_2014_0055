@@ -20,6 +20,7 @@ module.exports = async function auth(req, res, next) {
     }
 
     req.userId = payload.id;
+    req.userRole = payload.role;
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });
