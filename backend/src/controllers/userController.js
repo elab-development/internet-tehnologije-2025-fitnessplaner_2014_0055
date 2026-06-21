@@ -6,12 +6,25 @@ function isPositiveInteger(value) {
   return Number.isInteger(value) && value > 0;
 }
 
+async function listUsers(req, res) {
+  const users = await User.findAll({
+    attributes: ['id', 'username', 'email', 'role'],
+    order: [['username', 'ASC']],
+  });
+
+  return res.status(200).json(users);
+}
+
 async function updateUserRole(req, res) {
   const id = Number(req.params.id);
   const { role } = req.body;
 
   if (!isPositiveInteger(id)) {
     return res.status(400).json({ message: 'invalid id' });
+  }
+
+  if (id === req.userId) {
+    return res.status(403).json({ message: 'cannot change your own role' });
   }
 
   if (!ROLES.includes(role)) {
@@ -33,4 +46,4 @@ async function updateUserRole(req, res) {
   });
 }
 
-module.exports = { updateUserRole };
+module.exports = { listUsers, updateUserRole };

@@ -1,0 +1,104 @@
+.admin {
+  min-height: 100vh;
+}
+
+.admin-bar {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.admin-bar .brand {
+  font-weight: 600;
+}
+
+.admin-bar .logout {
+  margin-left: auto;
+  font: inherit;
+  font-size: 0.85rem;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.admin-bar .logout:hover {
+  color: #1a1a1a;
+}
+
+.admin-main {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.admin-main h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.form-error {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.user-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6b7280;
+  font-weight: 600;
+  padding: 0 0.75rem 0.75rem;
+}
+
+.user-table td {
+  padding: 0.75rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.role-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.role-cell select {
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+.role-cell select:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.role-status {
+  font-size: 0.8rem;
+}
+
+.role-status.saved {
+  color: #16a34a;
+}
+
+.role-status.error {
+  color: #dc2626;
+}
