@@ -1,4 +1,4 @@
-const OFF_SEARCH_URL = 'https://world.openfoodfacts.org/api/v2/search';
+const OFF_SEARCH_URL = 'https://search.openfoodfacts.org/search';
 const PAGE_SIZE = 50;
 const MAX_RESULTS = 20;
 const REQUEST_TIMEOUT_MS = 5000;
@@ -21,7 +21,7 @@ function isComplete(food) {
 }
 
 async function searchByPrefix(query) {
-  const url = `${OFF_SEARCH_URL}?search_terms=${encodeURIComponent(query)}`
+  const url = `${OFF_SEARCH_URL}?q=${encodeURIComponent(query)}`
     + '&fields=product_name,code,nutriments'
     + `&page_size=${PAGE_SIZE}`;
 
@@ -39,11 +39,11 @@ async function searchByPrefix(query) {
     return [];
   }
 
-  const prefix = query.toLowerCase();
-  return (data.products || [])
+  const term = query.toLowerCase();
+  return (data.hits || [])
     .map(mapProduct)
     .filter(isComplete)
-    .filter((food) => food.name.toLowerCase().startsWith(prefix))
+    .filter((food) => food.name.toLowerCase().includes(term))
     .slice(0, MAX_RESULTS);
 }
 

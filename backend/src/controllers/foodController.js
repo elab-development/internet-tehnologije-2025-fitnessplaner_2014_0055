@@ -11,7 +11,7 @@ async function searchFoods(req, res) {
     return res.status(400).json({ message: 'q query param of at least 3 characters is required' });
   }
 
-  const where = { name: { [Op.like]: `${q}%` } };
+  const where = { name: { [Op.like]: `%${q}%` } };
 
   const existing = await Food.findAll({ where });
   if (existing.length > 0) {

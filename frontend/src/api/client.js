@@ -1,8 +1,17 @@
 import { getToken, clearAuth } from '../lib/auth'
 
-export async function apiGet(path) {
+async function request(method, path, body) {
+  const hasBody = body !== undefined
+
+  const headers = { Authorization: `Bearer ${getToken()}` }
+  if (hasBody) {
+    headers['Content-Type'] = 'application/json'
+  }
+
   const res = await fetch(`/api${path}`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
+    method,
+    headers,
+    body: hasBody ? JSON.stringify(body) : undefined,
   })
 
   if (res.status === 401) {
@@ -16,4 +25,20 @@ export async function apiGet(path) {
     throw new Error(data.message || 'Something went wrong')
   }
   return data
+}
+
+export function apiGet(path) {
+  return request('GET', path)
+}
+
+export function apiPost(path, body) {
+  return request('POST', path, body)
+}
+
+export function apiPatch(path, body) {
+  return request('PATCH', path, body)
+}
+
+export function apiDelete(path) {
+  return request('DELETE', path)
 }

@@ -1,0 +1,191 @@
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #1a1a1a;
+}
+
+.nutrition-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.nutrition-layout > section {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6b7280;
+  margin: 0 0 1rem;
+}
+
+.search-input,
+.add-form input,
+.entry-controls input,
+.hydration-set input {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input:focus,
+.add-form input:focus,
+.entry-controls input:focus,
+.hydration-set input:focus {
+  outline: none;
+  border-color: #16a34a;
+}
+
+.result-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  max-height: 18rem;
+  overflow-y: auto;
+}
+
+.result {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.625rem 0.5rem;
+  font: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  cursor: pointer;
+}
+
+.result:hover {
+  background: #f9fafb;
+}
+
+.result-selected {
+  background: #f0fdf4;
+}
+
+.food-name {
+  font-weight: 500;
+}
+
+.add-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.add-form .food-name {
+  margin-right: auto;
+}
+
+.add-form input,
+.entry-controls input {
+  width: 5rem;
+}
+
+.entry-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.entry-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.entry-row:first-child {
+  border-top: 1px solid #e5e5e5;
+}
+
+.entry-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.entry-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hydration-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hydration-set {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.hydration-set input {
+  width: 6rem;
+}
+
+.add-form button,
+.entry-controls button,
+.hydration-actions button,
+.hydration-set button {
+  font: inherit;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+}
+
+.add-form button[type="submit"],
+.hydration-set button {
+  font-weight: 600;
+  color: #fff;
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.entry-controls .remove {
+  color: #dc2626;
+}
+
+.add-form button:disabled,
+.entry-controls button:disabled,
+.hydration-actions button:disabled,
+.hydration-set button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
