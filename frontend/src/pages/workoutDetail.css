@@ -10,26 +10,95 @@
   color: #1a1a1a;
 }
 
-.exercise-list {
+.exercise-name {
+  font-weight: 500;
+}
+
+.add-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.add-form select {
+  margin-right: auto;
+}
+
+.add-form select,
+.add-form input,
+.entry-controls input {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+.add-form input,
+.entry-controls input {
+  width: 4rem;
+}
+
+.add-form select:focus,
+.add-form input:focus,
+.entry-controls input:focus {
+  outline: none;
+  border-color: #16a34a;
+}
+
+.entry-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
 }
 
-.exercise-list li {
+.entry-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
   padding: 0.875rem 0;
   border-bottom: 1px solid #e5e5e5;
 }
 
-.exercise-list li:first-child {
+.entry-row:first-child {
   border-top: 1px solid #e5e5e5;
 }
 
-.exercise-name {
-  font-weight: 500;
+.entry-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-form button,
+.entry-controls button {
+  font: inherit;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+}
+
+.add-form button[type="submit"] {
+  font-weight: 600;
+  color: #fff;
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.entry-controls .remove {
+  color: #dc2626;
+}
+
+.add-form button:disabled,
+.entry-controls button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

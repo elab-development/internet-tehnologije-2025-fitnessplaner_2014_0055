@@ -113,6 +113,20 @@
   margin: 0;
 }
 
+.link-button {
+  font: inherit;
+  color: #16a34a;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.link-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .plan-list {
   list-style: none;
   margin: 0;
