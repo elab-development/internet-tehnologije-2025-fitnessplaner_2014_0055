@@ -7,6 +7,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/workout-plans', require('./routes/workoutPlans'));
 app.use('/api/exercises', require('./routes/exercises'));
+app.use('/api/users', require('./routes/users'));
 app.use('/api/daily-logs', require('./routes/dailyLogs'));
 app.use('/api/foods', require('./routes/foods'));
 
