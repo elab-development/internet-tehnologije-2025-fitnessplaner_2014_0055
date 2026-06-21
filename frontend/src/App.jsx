@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
 import WorkoutDetail from './pages/WorkoutDetail'
+import ExerciseDetail from './pages/ExerciseDetail'
 import Nutrition from './pages/Nutrition'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -22,6 +23,14 @@ function App() {
         element={
           <ProtectedRoute>
             <WorkoutDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/exercises/:id"
+        element={
+          <ProtectedRoute>
+            <ExerciseDetail />
           </ProtectedRoute>
         }
       />

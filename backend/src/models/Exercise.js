@@ -8,14 +8,14 @@ const Exercise = sequelize.define('Exercise', {
     unique: true,
   },
   muscles: {
-    type: DataTypes.JSON,
+    type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: [],
+    defaultValue: '',
   },
   description: {
     type: DataTypes.TEXT,
   },
-  videoURL: {
+  videoId: {
     type: DataTypes.STRING,
     allowNull: true,
   },

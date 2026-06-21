@@ -15,7 +15,7 @@ module.exports = {
         unique: true,
       },
       muscles: {
-        type: Sequelize.JSON,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       description: {

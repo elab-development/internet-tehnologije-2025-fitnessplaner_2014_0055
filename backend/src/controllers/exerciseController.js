@@ -28,18 +28,18 @@ async function getExercise(req, res) {
 }
 
 async function createExercise(req, res) {
-  const { name, muscles, description, videoURL } = req.body;
+  const { name, muscles, description, videoId } = req.body;
 
   if (!name) {
     return res.status(400).json({ message: 'name is required' });
   }
 
-  if (muscles !== undefined && !Array.isArray(muscles)) {
-    return res.status(400).json({ message: 'muscles must be an array' });
+  if (muscles !== undefined && typeof muscles !== 'string') {
+    return res.status(400).json({ message: 'muscles must be a string' });
   }
 
   try {
-    const exercise = await Exercise.create({ name, muscles, description, videoURL });
+    const exercise = await Exercise.create({ name, muscles, description, videoId });
     return res.status(201).json(exercise);
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
@@ -54,14 +54,14 @@ async function createExercise(req, res) {
 
 async function updateExercise(req, res) {
   const id = Number(req.params.id);
-  const { name, muscles, description, videoURL } = req.body;
+  const { name, muscles, description, videoId } = req.body;
 
   if (!isPositiveInteger(id)) {
     return res.status(400).json({ message: 'invalid id' });
   }
 
-  if (muscles !== undefined && !Array.isArray(muscles)) {
-    return res.status(400).json({ message: 'muscles must be an array' });
+  if (muscles !== undefined && typeof muscles !== 'string') {
+    return res.status(400).json({ message: 'muscles must be a string' });
   }
 
   const exercise = await Exercise.findByPk(id);
@@ -70,7 +70,7 @@ async function updateExercise(req, res) {
   }
 
   try {
-    await exercise.update({ name, muscles, description, videoURL });
+    await exercise.update({ name, muscles, description, videoId });
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
       return res.status(409).json({ message: 'an exercise with this name already exists' });

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function WorkoutItemRow({ item, onUpdate, onRemove }) {
   const [sets, setSets] = useState(String(item.sets))
@@ -36,7 +37,9 @@ function WorkoutItemRow({ item, onUpdate, onRemove }) {
 
   return (
     <li className="entry-row">
-      <span className="exercise-name">{item.Exercise?.name}</span>
+      <Link to={`/exercises/${item.Exercise?.id}`} className="exercise-name">
+        {item.Exercise?.name}
+      </Link>
       <div className="entry-controls">
         <input
           type="number"

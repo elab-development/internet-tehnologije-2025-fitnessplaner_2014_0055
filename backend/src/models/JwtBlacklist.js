@@ -11,6 +11,8 @@ const JwtBlacklist = sequelize.define('JwtBlacklist', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+}, {
+  tableName: 'JwtBlacklist',
 });
 
 module.exports = JwtBlacklist;
