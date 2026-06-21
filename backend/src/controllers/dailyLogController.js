@@ -158,27 +158,4 @@ async function removeFoodEntry(req, res) {
   return res.status(204).end();
 }
 
-async function recalculateDailyLogTotals(dailyLogId) {
-  const entries = await FoodEntry.findAll({ where: { dailyLogId }, include: [Food] });
-  const totals = entries.reduce((acc, entry) => {
-    const factor = entry.grams / 100;
-    acc.calories += (entry.Food.caloriesPer100g ?? 0) * factor;
-    acc.protein += (entry.Food.proteinPer100g ?? 0) * factor;
-    acc.carbs += (entry.Food.carbsPer100g ?? 0) * factor;
-    acc.fat += (entry.Food.fatPer100g ?? 0) * factor;
-    return acc;
-  }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
-
-  await DailyLog.update({
-    calories: Math.round(totals.calories),
-    protein: Math.round(totals.protein),
-    carbs: Math.round(totals.carbs),
-    fat: Math.round(totals.fat),
-  }, { where: { id: dailyLogId } });
-}
-
-FoodEntry.addHook('afterCreate', (entry) => recalculateDailyLogTotals(entry.dailyLogId));
-FoodEntry.addHook('afterUpdate', (entry) => recalculateDailyLogTotals(entry.dailyLogId));
-FoodEntry.addHook('afterDestroy', (entry) => recalculateDailyLogTotals(entry.dailyLogId));
-
 module.exports = { getDailyLogByDate, createDailyLog, updateDailyLog, addFoodEntry, updateFoodEntry, removeFoodEntry };
