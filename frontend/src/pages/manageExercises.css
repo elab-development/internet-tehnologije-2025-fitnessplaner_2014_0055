@@ -1,0 +1,91 @@
+.exercise-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding: 1.25rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.exercise-form h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.exercise-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.exercise-form input,
+.exercise-form textarea {
+  font: inherit;
+  color: #1a1a1a;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.exercise-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.exercise-form-actions button,
+.exercise-list-actions button {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #1a1a1a;
+  background: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+}
+
+.exercise-form-actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.exercise-form-actions .secondary,
+.exercise-list-actions button {
+  background: transparent;
+  color: #1a1a1a;
+}
+
+.exercise-list-actions .danger {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.exercise-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.exercise-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.exercise-name {
+  font-weight: 500;
+}
+
+.exercise-list-actions {
+  display: flex;
+  gap: 0.5rem;
+}

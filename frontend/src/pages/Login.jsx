@@ -37,7 +37,8 @@ function Login() {
     try {
       const data = await login(form)
       saveAuth(data)
-      navigate(data.user.role === 'admin' ? '/users' : '/')
+      const { role } = data.user
+      navigate(role === 'admin' ? '/users' : role === 'trainer' ? '/manage-exercises' : '/')
     } catch (err) {
       setFormError(err.message)
     } finally {

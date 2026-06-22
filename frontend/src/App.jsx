@@ -6,6 +6,7 @@ import WorkoutDetail from './pages/WorkoutDetail'
 import ExerciseDetail from './pages/ExerciseDetail'
 import Nutrition from './pages/Nutrition'
 import AdminUsers from './pages/AdminUsers'
+import TrainerExercises from './pages/TrainerExercises'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -48,6 +49,14 @@ function App() {
         element={
           <ProtectedRoute adminOnly>
             <AdminUsers />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/manage-exercises"
+        element={
+          <ProtectedRoute trainerOnly>
+            <TrainerExercises />
           </ProtectedRoute>
         }
       />
