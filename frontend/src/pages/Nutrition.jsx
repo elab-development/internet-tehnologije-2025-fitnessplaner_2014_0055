@@ -13,6 +13,7 @@ import TopNav from '../components/TopNav'
 import FoodSearch from '../components/nutrition/FoodSearch'
 import FoodEntryRow from '../components/nutrition/FoodEntryRow'
 import HydrationControl from '../components/nutrition/HydrationControl'
+import NutritionCharts from '../components/nutrition/NutritionCharts'
 import './home.css'
 import './nutrition.css'
 
@@ -91,6 +92,8 @@ function Nutrition() {
                 <li><span className="muted">Fat</span>{log?.fat ?? 0} g</li>
               </ul>
             </section>
+
+            <NutritionCharts log={log} entries={entries} />
 
             <FoodSearch onAdd={handleAddFood} />
 
