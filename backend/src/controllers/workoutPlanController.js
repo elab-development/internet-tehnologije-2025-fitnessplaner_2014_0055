@@ -1,7 +1,12 @@
+const { Op } = require('sequelize');
 const { sequelize, WorkoutPlan, WorkoutItem, Exercise } = require('../models');
 
 function isPositiveInteger(value) {
   return Number.isInteger(value) && value > 0;
+}
+
+function isValidDate(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
 }
 
 async function getWorkoutPlanByDate(req, res) {
@@ -14,6 +19,23 @@ async function getWorkoutPlanByDate(req, res) {
 
   const plan = await WorkoutPlan.findOne({ where: { date, userId }, include: [WorkoutItem] });
   return res.status(200).json(plan);
+}
+
+async function getWorkoutPlansInRange(req, res) {
+  const userId = req.userId;
+  const { from, to } = req.query;
+
+  if (!isValidDate(from) || !isValidDate(to)) {
+    return res.status(400).json({ message: 'valid from and to query params (YYYY-MM-DD) are required' });
+  }
+
+  const plans = await WorkoutPlan.findAll({
+    where: { userId, date: { [Op.between]: [from, to] } },
+    include: [{ model: WorkoutItem, include: [Exercise] }],
+    order: [['date', 'ASC']],
+  });
+
+  return res.status(200).json(plans);
 }
 
 async function getWorkoutPlanById(req, res) {
@@ -243,6 +265,7 @@ async function deleteWorkoutPlan(req, res) {
 
 module.exports = {
   getWorkoutPlanByDate,
+  getWorkoutPlansInRange,
   getWorkoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,

@@ -4,6 +4,10 @@ export function getWorkoutPlans(date) {
   return apiGet(`/workout-plans?date=${date}`)
 }
 
+export function getWorkoutPlansInRange(from, to) {
+  return apiGet(`/workout-plans/range?from=${from}&to=${to}`)
+}
+
 export function getWorkoutPlan(id) {
   return apiGet(`/workout-plans/${id}`)
 }

@@ -127,6 +127,52 @@ describe('GET /api/workout-plans', () => {
   });
 });
 
+describe('GET /api/workout-plans/range', () => {
+  test('returns 200 with the plans in the range', async () => {
+    WorkoutPlan.findAll.mockResolvedValue([
+      { id: 10, date: '2026-06-17', WorkoutItems: [] },
+      { id: 11, date: '2026-06-20', WorkoutItems: [] },
+    ]);
+
+    const res = await request(app)
+      .get('/api/workout-plans/range?from=2026-06-01&to=2026-06-30')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(2);
+    expect(WorkoutPlan.findAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ userId: 1 }),
+      }),
+    );
+  });
+
+  test('returns 400 when from or to is missing', async () => {
+    const res = await request(app)
+      .get('/api/workout-plans/range?from=2026-06-01')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+  });
+
+  test('returns 400 for an invalid date format', async () => {
+    const res = await request(app)
+      .get('/api/workout-plans/range?from=06-01-2026&to=2026-06-30')
+      .set('Authorization', auth);
+
+    expect(res.status).toBe(400);
+    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+  });
+
+  test('returns 401 without a token', async () => {
+    const res = await request(app).get('/api/workout-plans/range?from=2026-06-01&to=2026-06-30');
+
+    expect(res.status).toBe(401);
+    expect(WorkoutPlan.findAll).not.toHaveBeenCalled();
+  });
+});
+
 describe('GET /api/workout-plans/:id', () => {
   test('returns 200 with the plan and its exercises', async () => {
     WorkoutPlan.findOne.mockResolvedValue({

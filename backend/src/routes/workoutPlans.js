@@ -2,6 +2,7 @@ const express = require('express');
 const auth = require('../middleware/auth');
 const {
   getWorkoutPlanByDate,
+  getWorkoutPlansInRange,
   getWorkoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
@@ -14,6 +15,7 @@ const {
 const router = express.Router();
 
 router.get('/', auth, getWorkoutPlanByDate);
+router.get('/range', auth, getWorkoutPlansInRange);
 router.get('/:id', auth, getWorkoutPlanById);
 router.post('/', auth, createWorkoutPlan);
 router.put('/:id', auth, updateWorkoutPlan);
