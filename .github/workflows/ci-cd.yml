@@ -75,18 +75,18 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # deploy:
-  #   needs: build-and-push
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Install Railway CLI
-  #       run: npm install -g @railway/cli
-  #     - name: Redeploy backend service
-  #       run: railway redeploy --service backend --yes
-  #       env:
-  #         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-  #     - name: Redeploy frontend service
-  #       run: railway redeploy --service frontend --yes
-  #       env:
-  #         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  deploy:
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      - name: Redeploy backend service
+        run: railway redeploy --service backend --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Redeploy frontend service
+        run: railway redeploy --service frontend --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
