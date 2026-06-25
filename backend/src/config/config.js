@@ -8,5 +8,6 @@ module.exports = {
     host: db.host,
     port: db.port,
     dialect: db.dialect,
+    seederStorage: 'sequelize',
   },
 };
