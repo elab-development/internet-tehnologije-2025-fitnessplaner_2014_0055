@@ -17,9 +17,11 @@
 }
 
 .nutrition-layout > section {
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .section-title {
@@ -73,9 +75,9 @@
 .hydration-set input {
   font: inherit;
   padding: 0.55rem 0.7rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: inherit;
 }
 
@@ -89,7 +91,8 @@
 .entry-controls input:focus,
 .hydration-set input:focus {
   outline: none;
-  border-color: #16a34a;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
 }
 
 .result-list {
@@ -199,23 +202,39 @@
 .hydration-set button {
   font: inherit;
   padding: 0.5rem 0.8rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: inherit;
   cursor: pointer;
+}
+
+.add-form button:hover:not(:disabled),
+.entry-controls button:hover:not(:disabled),
+.hydration-actions button:hover:not(:disabled) {
+  border-color: var(--text);
 }
 
 .add-form button[type="submit"],
 .hydration-set button {
   font-weight: 600;
   color: #fff;
-  background: #16a34a;
-  border-color: #16a34a;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.add-form button[type="submit"]:hover:not(:disabled),
+.hydration-set button:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .entry-controls .remove {
-  color: #dc2626;
+  color: var(--danger);
+}
+
+.entry-controls .remove:hover:not(:disabled) {
+  border-color: var(--danger);
 }
 
 .add-form button:disabled,

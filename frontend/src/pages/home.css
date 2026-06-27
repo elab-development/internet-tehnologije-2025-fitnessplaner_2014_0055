@@ -7,11 +7,17 @@
   align-items: center;
   gap: 2rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--border);
+  background: rgba(252, 252, 253, 0.85);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .topnav .brand {
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: inherit;
   text-decoration: none;
 }
@@ -23,12 +29,12 @@
 }
 
 .topnav nav a {
-  color: #6b7280;
+  color: var(--muted);
   text-decoration: none;
 }
 
 .topnav nav a:hover {
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 .topnav-user {
@@ -42,7 +48,7 @@
 .topnav-user button {
   font: inherit;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--muted);
   background: none;
   border: none;
   cursor: pointer;
@@ -50,7 +56,7 @@
 }
 
 .topnav-user button:hover {
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 .home-main {
@@ -66,11 +72,12 @@
 .home-header h1 {
   font-size: 1.5rem;
   font-weight: 600;
+  letter-spacing: -0.02em;
   margin: 0 0 0.25rem;
 }
 
 .muted {
-  color: #6b7280;
+  color: var(--muted);
 }
 
 .dashboard-grid {
@@ -80,9 +87,19 @@
 }
 
 .card {
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 1.25rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), border-color var(--transition),
+    transform var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
 }
 
 .card-header {
@@ -97,29 +114,37 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: #6b7280;
+  color: var(--muted);
   margin: 0;
 }
 
 .card-header a {
   font-size: 0.85rem;
-  color: #16a34a;
+  color: var(--accent);
   text-decoration: none;
 }
 
+.card-header a:hover {
+  color: var(--accent-hover);
+}
+
 .card-error {
-  color: #dc2626;
+  color: var(--danger);
   font-size: 0.875rem;
   margin: 0;
 }
 
 .link-button {
   font: inherit;
-  color: #16a34a;
+  color: var(--accent);
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--accent-hover);
 }
 
 .link-button:disabled {

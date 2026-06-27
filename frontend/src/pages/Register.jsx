@@ -49,47 +49,50 @@ function Register() {
 
   return (
     <main className="auth">
-      <h1>Create account</h1>
-      <form onSubmit={handleSubmit} noValidate>
-        <label>
-          Username
-          <input
-            type="text"
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-          />
-          {errors.username && <span className="field-error">{errors.username}</span>}
-        </label>
+      <div className="auth-card">
+        <p className="auth-brand">Fitness Planner</p>
+        <h1>Create account</h1>
+        <form onSubmit={handleSubmit} noValidate>
+          <label>
+            Username
+            <input
+              type="text"
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+            />
+            {errors.username && <span className="field-error">{errors.username}</span>}
+          </label>
 
-        <label>
-          Email
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-          {errors.email && <span className="field-error">{errors.email}</span>}
-        </label>
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+            />
+            {errors.email && <span className="field-error">{errors.email}</span>}
+          </label>
 
-        <label>
-          Password
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-          />
-          {errors.password && <span className="field-error">{errors.password}</span>}
-        </label>
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+            />
+            {errors.password && <span className="field-error">{errors.password}</span>}
+          </label>
 
-        {formError && <p className="form-error">{formError}</p>}
+          {formError && <p className="form-error">{formError}</p>}
 
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Creating account…' : 'Create account'}
-        </button>
-      </form>
+          <button type="submit" disabled={submitting}>
+            {submitting ? 'Creating account…' : 'Create account'}
+          </button>
+        </form>
+      </div>
 
       <p className="switch">
         Already have an account? <Link to="/login">Log in</Link>

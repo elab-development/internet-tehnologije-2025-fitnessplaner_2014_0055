@@ -78,7 +78,7 @@ function Workouts() {
     <div className="home">
       <TopNav />
       <main className="home-main">
-        <Link to="/" className="back-link">← Back</Link>
+        <Link to="/" className="back-link">Back</Link>
 
         <header className="home-header">
           <h1>Workouts</h1>

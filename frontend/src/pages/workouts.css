@@ -16,15 +16,16 @@
 .calendar-nav button {
   font: inherit;
   padding: 0.4rem 0.7rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: inherit;
   cursor: pointer;
 }
 
 .calendar-nav button:hover {
-  border-color: #16a34a;
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .calendar-grid {
@@ -51,10 +52,11 @@
   aspect-ratio: 1;
   font: inherit;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: none;
   color: inherit;
   cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition);
 }
 
 .calendar-day:hover {

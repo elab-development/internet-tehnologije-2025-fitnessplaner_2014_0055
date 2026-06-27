@@ -6,7 +6,12 @@
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--border);
+  background: rgba(252, 252, 253, 0.85);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .admin-bar .brand {
@@ -80,10 +85,16 @@
 .role-cell select {
   font: inherit;
   padding: 0.35rem 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: inherit;
+}
+
+.role-cell select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
 }
 
 .role-cell select:disabled {

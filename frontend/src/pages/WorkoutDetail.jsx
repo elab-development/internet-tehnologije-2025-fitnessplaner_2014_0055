@@ -57,7 +57,7 @@ function WorkoutDetail() {
     <div className="home">
       <TopNav />
       <main className="home-main">
-        <Link to="/" className="back-link">← Back</Link>
+        <Link to="/" className="back-link">Back</Link>
 
         {error && <p className="card-error">{error}</p>}
         {!error && plan === null && <p className="muted">Loading…</p>}
