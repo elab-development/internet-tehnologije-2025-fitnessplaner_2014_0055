@@ -21,7 +21,7 @@ function NutritionSummary({ date }) {
   const fat = log?.fat ?? 0
 
   return (
-    <Card title="Nutrition" action={<Link to="/nutrition">Log food</Link>}>
+    <Card title="Nutrition" accent="blue" action={<Link to="/nutrition">Log food</Link>}>
       {error && <p className="card-error">{error}</p>}
       {!error && log === undefined && <p className="muted">Loading…</p>}
       {!error && log !== undefined && (
@@ -33,9 +33,9 @@ function NutritionSummary({ date }) {
           </div>
 
           <ul className="macros">
-            <li><span className="muted">Protein</span>{protein} g</li>
-            <li><span className="muted">Carbs</span>{carbs} g</li>
-            <li><span className="muted">Fat</span>{fat} g</li>
+            <li className="macro-protein"><span className="muted">Protein</span>{protein} g</li>
+            <li className="macro-carbs"><span className="muted">Carbs</span>{carbs} g</li>
+            <li className="macro-fat"><span className="muted">Fat</span>{fat} g</li>
           </ul>
         </>
       )}

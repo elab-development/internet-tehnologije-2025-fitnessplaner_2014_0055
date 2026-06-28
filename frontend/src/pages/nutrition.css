@@ -17,6 +17,8 @@
 }
 
 .nutrition-layout > section {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
@@ -24,12 +26,22 @@
   box-shadow: var(--shadow-sm);
 }
 
+.nutrition-layout > section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+}
+
 .section-title {
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: #6b7280;
+  letter-spacing: 0.04em;
+  color: var(--blue);
   margin: 0 0 1rem;
 }
 
@@ -215,18 +227,28 @@
   border-color: var(--text);
 }
 
-.add-form button[type="submit"],
-.hydration-set button {
+.add-form button[type="submit"] {
   font-weight: 600;
   color: #fff;
   background: var(--accent);
   border-color: var(--accent);
 }
 
-.add-form button[type="submit"]:hover:not(:disabled),
-.hydration-set button:hover:not(:disabled) {
+.hydration-set button {
+  font-weight: 600;
+  color: #fff;
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.add-form button[type="submit"]:hover:not(:disabled) {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
+}
+
+.hydration-set button:hover:not(:disabled) {
+  background: #0e7490;
+  border-color: #0e7490;
 }
 
 .entry-controls .remove {

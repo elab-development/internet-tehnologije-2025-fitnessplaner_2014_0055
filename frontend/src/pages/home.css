@@ -16,9 +16,12 @@
 }
 
 .topnav .brand {
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
-  color: inherit;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   text-decoration: none;
 }
 
@@ -31,10 +34,11 @@
 .topnav nav a {
   color: var(--muted);
   text-decoration: none;
+  font-weight: 500;
 }
 
 .topnav nav a:hover {
-  color: var(--text);
+  color: var(--accent);
 }
 
 .topnav-user {
@@ -87,6 +91,11 @@
 }
 
 .card {
+  --card-accent: var(--accent);
+  --card-accent-2: #4ade80;
+  --card-accent-soft: var(--accent-soft);
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
@@ -96,9 +105,37 @@
     transform var(--transition);
 }
 
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--card-accent), var(--card-accent-2));
+}
+
+.card.accent-blue {
+  --card-accent: var(--blue);
+  --card-accent-2: #60a5fa;
+  --card-accent-soft: var(--blue-soft);
+}
+
+.card.accent-violet {
+  --card-accent: var(--violet);
+  --card-accent-2: #a78bfa;
+  --card-accent-soft: var(--violet-soft);
+}
+
+.card.accent-amber {
+  --card-accent: var(--amber);
+  --card-accent-2: #fbbf24;
+  --card-accent-soft: var(--amber-soft);
+}
+
 .card:hover {
   box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
+  border-color: var(--card-accent);
   transform: translateY(-2px);
 }
 
@@ -111,21 +148,22 @@
 
 .card-header h2 {
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--muted);
+  letter-spacing: 0.04em;
+  color: var(--card-accent);
   margin: 0;
 }
 
 .card-header a {
   font-size: 0.85rem;
-  color: var(--accent);
+  font-weight: 500;
+  color: var(--card-accent);
   text-decoration: none;
 }
 
 .card-header a:hover {
-  color: var(--accent-hover);
+  text-decoration: underline;
 }
 
 .card-error {
@@ -181,8 +219,10 @@
 
 .metric-value {
   display: block;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--card-accent);
   margin-bottom: 0.5rem;
 }
 
@@ -199,7 +239,35 @@
   display: flex;
   gap: 1.5rem;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.macros li {
+  position: relative;
+  padding-left: 0.85rem;
+}
+
+.macros li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.macros .macro-protein::before {
+  background: var(--protein);
+}
+
+.macros .macro-carbs::before {
+  background: var(--carbs);
+}
+
+.macros .macro-fat::before {
+  background: var(--fat);
 }
 
 .macros .muted {

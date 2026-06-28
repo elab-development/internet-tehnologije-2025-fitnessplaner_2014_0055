@@ -34,7 +34,7 @@ function WorkoutSummary({ date }) {
     : null
 
   return (
-    <Card title="Today's workout" action={action}>
+    <Card title="Today's workout" accent="green" action={action}>
       {error && <p className="card-error">{error}</p>}
       {!error && plan === undefined && <p className="muted">Loading…</p>}
       {!error && plan === null && (

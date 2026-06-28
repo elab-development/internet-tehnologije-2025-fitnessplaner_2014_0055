@@ -10,7 +10,8 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-const MACRO_COLORS = ['#16a34a', '#86c8a0', '#cbd5e1']
+const MACRO_COLORS = ['#f43f5e', '#f59e0b', '#8b5cf6']
+const BAR_COLORS = ['#2563eb', '#16a34a', '#f59e0b', '#f43f5e', '#8b5cf6', '#0891b2']
 
 function caloriesFor(entry) {
   return Math.round((entry.Food?.caloriesPer100g ?? 0) * (entry.grams / 100))
@@ -79,7 +80,11 @@ function NutritionCharts({ log, entries }) {
                   tick={{ fontSize: 12, fill: '#6b7280' }}
                 />
                 <Tooltip formatter={(value) => [`${value} kcal`, 'Calories']} cursor={{ fill: '#f9fafb' }} />
-                <Bar dataKey="calories" fill="#16a34a" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="calories" radius={[0, 4, 4, 0]}>
+                  {foodData.map((entry, i) => (
+                    <Cell key={entry.name} fill={BAR_COLORS[i % BAR_COLORS.length]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

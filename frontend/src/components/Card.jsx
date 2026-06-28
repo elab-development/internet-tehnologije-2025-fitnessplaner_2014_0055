@@ -1,6 +1,6 @@
-function Card({ title, action, children }) {
+function Card({ title, action, accent = 'green', children }) {
   return (
-    <section className="card">
+    <section className={`card accent-${accent}`}>
       <header className="card-header">
         <h2>{title}</h2>
         {action}

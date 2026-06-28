@@ -12,6 +12,8 @@
 }
 
 .auth-card {
+  position: relative;
+  overflow: hidden;
   padding: 2rem;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -19,12 +21,25 @@
   box-shadow: var(--shadow-md);
 }
 
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--grad-brand);
+}
+
 .auth-brand {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent);
+  letter-spacing: 0.08em;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   margin: 0 0 0.5rem;
 }
 
@@ -70,15 +85,15 @@
   font: inherit;
   font-weight: 600;
   color: #fff;
-  background: var(--accent);
+  background: var(--grad-brand);
   border: none;
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
   cursor: pointer;
 }
 
 .auth button:hover:not(:disabled) {
-  background: var(--accent-hover);
+  filter: brightness(1.07);
 }
 
 .auth button:active:not(:disabled) {
