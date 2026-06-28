@@ -6,8 +6,7 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
-ENV PORT=80
-ENV NGINX_ENVSUBST_FILTER='^(BACKEND_URL|PORT)$'
+ENV NGINX_ENVSUBST_FILTER=BACKEND_URL
 COPY default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
