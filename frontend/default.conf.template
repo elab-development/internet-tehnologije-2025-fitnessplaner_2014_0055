@@ -1,5 +1,12 @@
+log_format upstreamlog '$remote_addr "$request" status=$status '
+                       'upstream=$upstream_addr ustatus=$upstream_status '
+                       'connect=$upstream_connect_time resp=$upstream_response_time total=$request_time';
+
 server {
   listen 80;
+  access_log /var/log/nginx/access.log upstreamlog;
+
+  proxy_connect_timeout 5s;
 
   location /api/ {
     proxy_pass ${BACKEND_URL};
