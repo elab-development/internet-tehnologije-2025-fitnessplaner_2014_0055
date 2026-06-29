@@ -22,3 +22,4 @@ npm run seed
 
 echo "Starting server..."
 exec node src/server.js
+ 
