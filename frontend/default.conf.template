@@ -1,8 +1,6 @@
 server {
   listen 80;
 
-  resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
-
   location /api/ {
     set $backend ${BACKEND_URL};
     proxy_pass $backend$request_uri;
